@@ -36,45 +36,31 @@ abstract class Payload
                 continue;
             }
 
-            $value = $prop->getValue($this);
-
-            if ($value instanceof Payload) {
-                $data[$prop->getName()] = $value->toArray();
-            } elseif ($value instanceof \BackedEnum) {
-                $data[$prop->getName()] = $value->value;
-            } elseif ($value instanceof \UnitEnum) {
-                $data[$prop->getName()] = $value->name;
-            } elseif (\is_object($value) && \method_exists($value, 'toArray')) {
-                $data[$prop->getName()] = $value->toArray();
-            } elseif (\is_array($value)) {
-                $data[$prop->getName()] = $this->serializeArray($value);
-            } else {
-                $data[$prop->getName()] = $value;
-            }
+            $data[$prop->getName()] = self::serializeValue($prop->getValue($this));
         }
 
         return [static::class, $data];
     }
 
-    private function serializeArray(array $array): array
+    private static function serializeArray(array $array): array
     {
         $result = [];
         foreach ($array as $key => $value) {
-            if ($value instanceof Payload) {
-                $result[$key] = $value->toArray();
-            } elseif ($value instanceof \BackedEnum) {
-                $result[$key] = $value->value;
-            } elseif ($value instanceof \UnitEnum) {
-                $result[$key] = $value->name;
-            } elseif (\is_object($value) && \method_exists($value, 'toArray')) {
-                $result[$key] = $value->toArray();
-            } elseif (\is_array($value)) {
-                $result[$key] = $this->serializeArray($value);
-            } else {
-                $result[$key] = $value;
-            }
+            $result[$key] = self::serializeValue($value);
         }
         return $result;
+    }
+
+    private static function serializeValue(mixed $value): mixed
+    {
+        return match (true) {
+            $value instanceof Payload => $value->toArray(),
+            $value instanceof \BackedEnum => $value->value,
+            $value instanceof \UnitEnum => $value->name,
+            \is_object($value) && \method_exists($value, 'toArray') => $value->toArray(),
+            \is_array($value) => self::serializeArray($value),
+            default => $value,
+        };
     }
 
     public static function fromArray(array $data): static

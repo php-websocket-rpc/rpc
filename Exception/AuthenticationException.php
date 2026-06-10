@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace PhpWebsocketRpc\Rpc\Exception;
 
-
-
 /**
  * Thrown when authentication fails (invalid/expired/missing token).
  *

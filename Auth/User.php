@@ -11,15 +11,15 @@ namespace PhpWebsocketRpc\Rpc\Auth;
  * server and client sides. The ContractSerializer encodes/decodes it
  * via its public readonly properties.
  */
-final class User implements WebsocketUserInterface
+final readonly class User implements WebsocketUserInterface
 {
     /**
      * @param string       $id    Unique user identifier
      * @param list<string> $roles User roles
      */
     public function __construct(
-        public readonly string $id,
-        public readonly array $roles,
+        public string $id,
+        public array $roles,
     ) {}
 
     public function getUniqueIdentifier(): string

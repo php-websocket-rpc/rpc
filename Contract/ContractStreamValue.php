@@ -23,7 +23,8 @@ final class ContractStreamValue extends Payload implements Kind\StreamData
      */
     public string $channelName = '';
 
-    public function __construct(/** The yielded/pushed value (scalar, array, or serialized object). */
+    public function __construct(
+        /** The yielded/pushed value (scalar, array, or serialized object). */
         public readonly mixed $value = null,
     ) {
         parent::__construct();
